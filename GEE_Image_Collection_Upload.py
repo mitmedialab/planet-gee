@@ -13,7 +13,7 @@ https://www.tucson.ars.ag.gov/notebooks/uploading_data_2_gee.html
 
 
 def ConvertRadToRef(filenamelist):
-    """CONVERT SET OF RADIANCE DATA GEOTIFFS TO SURFACE REFLECANCE DATA
+    """CONVERT SET OF RADIANCE DATA GEOTIFFS TO SURFACE REFLECTANCE DATA
         
     Args:
         filenamelist: str of filenames, each seperated by a return
@@ -48,11 +48,16 @@ def UploadToGoogleCloudStorage(filenamelist, bucket):
     
     #Import libraries
     import subprocess
-
+    
+    totalLength = len(filenamelist.split())
+    index = 0
     #Iterate through and upload each image
     for file in filenamelist.split():
         subprocess.call('gsutil -m cp ' + file + ' gs://' + bucket + '/',
                         shell=True)
+        index+=1
+        percentageComplete = index/totalLength*100
+        print(str(percentageComplete) + "% Complete")
         
     
 def ImportIntoGEE(filenamelist, prefix, bucket, **kwargs):
@@ -114,7 +119,7 @@ def ImportIntoGEE(filenamelist, prefix, bucket, **kwargs):
         folder_filepath = re.sub(base_name, '', file)
         folder_name = os.path.basename(os.path.normpath(folder_filepath))
         sep = '_'
-        date_name = folder_name.split(sep,1)[0]
+        date_name = base_name.split(sep,1)[0]
         
         #Concatante asset id name
         assetname = prefix + '_' + date_name
@@ -167,16 +172,22 @@ if str.__eq__(__name__, '__main__'):
     import subprocess
 
 
-    SR_filenames = subprocess.getoutput('find ./Images/LagoonTest/ -iname *AnalyticMS_SR.tif') 
-    UDM_filenames = subprocess.getoutput('find ./Images/LagoonTest/ -iname *AnalyticMS_DN_udm.tif')
-    MS_filenames = subprocess.getoutput('find ./Images/LagoonTest/ -iname *AnalyticMS.tif')
-    RF_filenames = subprocess.getoutput('find ./Images/LagoonTest/ -iname *AnalyticMS_Reflect.tif')
+    SR_filenames = subprocess.getoutput('find ./Images/GuanabaraBay/ -iname *AnalyticMS_SR.tif') 
+    UDM_filenames = subprocess.getoutput('find ./Images/GuanabaraBay/ -iname *AnalyticMS_DN_udm.tif')
+    # MS_filenames = subprocess.getoutput('find ./Images/ToUpload/ -iname *AnalyticMS.tif')
+    # RF_filenames = subprocess.getoutput('find ./Images/ToUpload/ -iname *AnalyticMS_Reflect.tif')
 
+    srlist = SR_filenames.split()
+    udmlist = UDM_filenames.split()
+    
+    print(len(srlist))
+    print(len(udmlist))
+    # print(UDM_filenames)
     
     # ConvertRadToRef(MS_filenames)
-    # UploadToGoogleCloudStorage(RF_filenames, 'lagoon_ms_528')
-    ImportIntoGEE(RF_filenames, 'Lagoon', 'lagoon_ms_528',
-                  destination = 'Lagoon_SR',
-                  suffix = 'RF',
-                  user = 'jackreid',
-                  metadata = 1)
+    # UploadToGoogleCloudStorage(SR_filenames, 'lagoon_new_sr_528')
+    # ImportIntoGEE(SR_filenames, 'Lagoon_New', 'lagoon_new_sr_528',
+    #               destination = 'Lagoon_SR',
+    #               suffix = 'SR',
+    #               user = 'jackreid',
+    #               metadata = 1)

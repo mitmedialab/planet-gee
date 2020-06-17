@@ -407,14 +407,19 @@ def Visualize_Planet(filename, **kwargs):
         """
         if band in ['blue','Blue','b','B',1]:
             outband = band_blue
+            print('blue')
         elif band in ['green','Green','g','G',2]:
             outband = band_green
+            print('green')
         elif band in ['red','Red','r','R',3]:
             outband = band_red
+            print('red')
         elif band in ['nir', 'NIR', 'infrared', 4]:
             outband = band_nir
+            print('nir')
         else:
             outband = []
+    
         return outband
     
     
@@ -474,11 +479,11 @@ def Visualize_Planet(filename, **kwargs):
     
     #For three band image
     elif num_bands == 3:
-        
+        ax = fig.add_subplot(111)
         #Select appropriate bands
         band_visualize = [id_band(input_bands[0]), 
                           id_band(input_bands[1]),
-                          id_band(input_bands[3])]
+                          id_band(input_bands[2])]
         
         # Normalize bands into 0.0 - 1.0 scale
         def normalize(array):
@@ -494,8 +499,10 @@ def Visualize_Planet(filename, **kwargs):
         normstack = np.dstack((norm1, norm2, norm3))
         
         # View the color composite
-        cax = fig.imshow(normstack)
-        fig.axis('off')
+        # cax = fig.imshow(normstack)
+        cax = ax.imshow(normstack)
+        
+        ax.axis('off')
 
     #show plot    
     plt.show()
@@ -513,9 +520,9 @@ if str.__eq__(__name__, '__main__'):
     # Ref_To_Rad('/home/jackreid/Google Drive/School/Research/Space Enabled/Code/Planet/Images/LagoonTest/2020_04_15/20200415_124525_0f34_3B_AnalyticMS.tif')    
     
     
-    # udm_mask = UDM_Masking('/home/jackreid/Google Drive/School/Research/Space Enabled/Code/Planet/Images/Lagoon Test/2020_04_15/20200415_124525_0f34_3B_AnalyticMS_DN_udm.tif',
+    # udm_mask = UDM_Masking('./Images/JacarepaguáLagoas/2020_05_11/20200511_115801_0f3c/20200511_115801_0f3c_3B_AnalyticMS_DN_udm.tif',
     #             visualize=1)
     
-    Visualize_Planet('./Images/LagoonTest/2020_04_15/20200415_124525_0f34_3B_AnalyticMS_Reflect.tif',
-                     num_bands = 1,
-                     bands = 'NIR')
+    Visualize_Planet('./Images/pika/20200527_151256_1009_3B_AnalyticMS_SR.tif',
+                      num_bands = 3,
+                      bands = ['red', 'green', 'blue'])
